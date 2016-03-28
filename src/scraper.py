@@ -47,3 +47,9 @@ def load_inspection_page(from_file):
     text = from_file.read()
     from_file.close()
     return text, 'utf-8'
+
+
+def parse_source(html, encoding='utf-8'):
+    """Setup the HTML as DOM nodes for scraping."""
+    parsed = BeautifulSoup(html, 'html5lib', from_encoding=encoding)
+    return parsed
