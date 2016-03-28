@@ -56,7 +56,7 @@ def parse_source(html, encoding='utf-8'):
 
 
 def extract_data_listings(html):
-    """Take parsed HTML and return list of restaurant listing container nodes."""
+    """Take parsed HTML and return list of restaurant-list container nodes."""
     id_finder = re.compile(r'PR[\d]+~')
     return html.find_all('div', id=id_finder)
 
@@ -65,11 +65,13 @@ if __name__ == '__main__':
     kwargs = {
         'Inspection_Start': '2/1/2013',
         'Inspection_End': '2/1/2015',
-        'Zip_Code': '98144'
+        'Zip_Code': '98107'
     }
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         html, encoding = load_inspection_page('inspection_page.html')
     else:
         html, encoding = get_inspection_page(**kwargs)
     doc = parse_source(html, encoding)
-    print(doc.prettify(encoding=encoding))
+    listings = extract_data_listings(doc)
+    print(len(listings))
+    print(listings[0].prettify())
