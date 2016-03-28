@@ -61,6 +61,23 @@ def extract_data_listings(html):
     return html.find_all('div', id=id_finder)
 
 
+def has_two_tds(elem):
+    """Take an element arg and return True if the element should pass through filter."""
+    is_tr = elem.name == 'tr'
+    td_children = elem.find_all('td', recursive=False)
+    has_two = len(td_children) == 2
+    return is_tr and has_two
+
+
+def clean_data(td):
+    """Clean values we get from cells."""
+    data = td.string
+    try:
+        return data.strip(" \n:-")
+    except AttributeError:
+        return u""
+
+
 if __name__ == '__main__':
     kwargs = {
         'Inspection_Start': '2/1/2013',
@@ -73,5 +90,12 @@ if __name__ == '__main__':
         html, encoding = get_inspection_page(**kwargs)
     doc = parse_source(html, encoding)
     listings = extract_data_listings(doc)
-    print(len(listings))
-    print(listings[0].prettify())
+    for listing in listings[:5]:
+        metadata_rows = listing.find('tbody').find_all(
+            has_two_tds, recursive=False
+        )
+        for row in metadata_rows:
+            for td in row.find_all('td', recursive=False):
+                print(repr(clean_data(td))),
+            print
+        print
